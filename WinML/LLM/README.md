@@ -191,8 +191,6 @@ Registering Execution Providers
 [INFO] VitisAIExecutionProvider is ready
 [INFO] Registered VitisAIExecutionProvider to ONNX GenAI
 [INFO] Library path: C:\Program Files\WindowsApps\MicrosoftCorporationII.WinML.AMD.NPU.EP.1.8_1.8.51.0_x64__8wekyb3d8bbwe\ExecutionProvider\onnxruntime_providers_vitisai.dll
-C:\Users\dwchenna\github\dwchenna\RyzenAI-SW\WinML\LLM\run_genai_llm.py:347: RuntimeWarning: Shutdown object was not called before being garbage collected.
-  if not register_vitisai_ep():
 
 ============================================================
 Loading model from: models\Phi-4-mini-instruct-vai-npu
