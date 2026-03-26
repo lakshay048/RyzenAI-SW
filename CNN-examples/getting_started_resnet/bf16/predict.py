@@ -14,13 +14,10 @@ import pathlib
 import onnxruntime as ort
 import onnxruntime
 import os
-import pickle
+from torchvision.datasets import CIFAR10
 
 
-def unpickle(file):
-    with open(file,'rb') as fo:
-        dict = pickle.load(fo, encoding='latin1')
-    return dict
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -68,14 +65,13 @@ def main():
             providers=providers,
             provider_options=[provider_options_dict]
         )
+    
+    dataset = CIFAR10(root="./data", train= False, download = False)  
+    images = dataset.data.transpose(0, 3, 1, 2)
+    labels = np.array(dataset.targets)
+    label_names = dataset.classes 
 
-    data_batch_1 = unpickle(datafile)
-    metadata = unpickle(metafile)
-
-    images = data_batch_1['data']
-    labels = data_batch_1['labels']
-    images = np.reshape(images,(10000, 3, 32, 32))
-
+    # create images folder
     dirname = 'images'
     if not os.path.exists(dirname):
         os.mkdir(dirname)
@@ -111,8 +107,11 @@ def main():
         # Process the outputs
         output_array = outputs[0]
         predicted_class = np.argmax(output_array)
-        predicted_label = metadata['label_names'][predicted_class]
-        label = metadata['label_names'][labels[i]]
+        
+        predicted_label = label_names[predicted_class]
+    
+        label = label_names[labels[i]]
+        
         print(f'Image {i}: Actual Label {label}, Predicted Label {predicted_label}')
 
 

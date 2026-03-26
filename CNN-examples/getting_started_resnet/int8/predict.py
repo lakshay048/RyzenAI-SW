@@ -10,7 +10,7 @@ import numpy as np
 from PIL import Image
 from pathlib import Path
 from resnet_utils import get_npu_info, get_xclbin
-
+from torchvision.datasets import CIFAR10
 
 quantized_model_path = r'./models/resnet_quantized.onnx'
 model = onnx.load(quantized_model_path)
@@ -38,6 +38,7 @@ if opt.ep == 'npu':
    # For PHX/HPT, xclbin is mandatory
    if npu_device == 'PHX/HPT':
        provider_options[0]['target'] = 'X1'
+       provider_options[0]['xlnx_enable_py3_round'] = 0
        provider_options[0]['xclbin'] = get_xclbin(npu_device)
 
 # Create session options
@@ -50,23 +51,12 @@ session = ort.InferenceSession(model.SerializeToString(),
                                provider_options=provider_options)
 
 
-def unpickle(file):
-    import pickle
-    with open(file,'rb') as fo:
-        dict = pickle.load(fo, encoding='latin1')
-    return dict
-
-
-datafile = r'./data/cifar-10-batches-py/test_batch'
-metafile = r'./data/cifar-10-batches-py/batches.meta'
-
-data_batch_1 = unpickle(datafile)
-metadata = unpickle(metafile)
-
-images = data_batch_1['data']
-labels = data_batch_1['labels']
-images = np.reshape(images,(10000, 3, 32, 32))
-
+dataset = CIFAR10(root="./data", train= False, download = False)  
+images = dataset.data.transpose(0, 3, 1, 2)
+labels = np.array(dataset.targets)
+label_names = dataset.classes   
+     
+# create images folder
 import os
 dirname = 'images'
 if not os.path.exists(dirname):
@@ -104,8 +94,12 @@ for i in range (0,10):
     # Process the outputs
     output_array = outputs[0]
     predicted_class = np.argmax(output_array)
-    predicted_label = metadata['label_names'][predicted_class]
-    label = metadata['label_names'][labels[i]]
+    
+
+    predicted_label = label_names[predicted_class]
+    
+    label = label_names[labels[i]]
+    
     print(f'Image {i}: Actual Label {label}, Predicted Label {predicted_label}')
 
 

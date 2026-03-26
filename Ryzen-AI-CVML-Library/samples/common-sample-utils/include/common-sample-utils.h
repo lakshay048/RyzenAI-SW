@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (C) 2021-2026 Advanced Micro Devices, Inc. All rights reserved.
  */
 
 #ifndef SAMPLES_COMMON_SAMPLE_UTILS_INCLUDE_COMMON_SAMPLE_UTILS_H_
@@ -77,8 +77,27 @@ class RunFeatureClass {
   /// Concatenate input/output images beside each other
   bool side_by_side_{false};
 
+  /// Enable mouse event callback on the output window
+  bool enable_mouse_callback_{false};
+
   // Called for specific run feature code in each feature
   virtual cv::Mat Feature(const cv::Mat& input_frame_rgb) { return input_frame_rgb; }
+
+  /**
+   * Mouse event handler. Override to handle mouse events on the output window.
+   * Called from the OpenCV mouse callback when enable_mouse_callback_ is true.
+   *
+   * @param event OpenCV mouse event type (e.g., cv::EVENT_LBUTTONDOWN)
+   * @param x Mouse x coordinate in window pixels
+   * @param y Mouse y coordinate in window pixels
+   * @param flags OpenCV mouse event flags
+   */
+  virtual void OnMouseEvent(int event, int x, int y, int flags) {
+    (void)event;
+    (void)x;
+    (void)y;
+    (void)flags;
+  }
 
   /**
    * The input extension is used to establish streaming mode. If a camera index is
@@ -151,6 +170,10 @@ class RunFeatureClass {
    * @return true if local's frame_rgb is ready to be processed
    */
   virtual bool GetSingleVideoFrame(uint32_t frame_id);
+
+ private:
+  /// OpenCV mouse event callback, forwards to virtual OnMouseEvent
+  static void MouseEventCallback(int event, int x, int y, int flags, void* userdata);
 };
 
 /**

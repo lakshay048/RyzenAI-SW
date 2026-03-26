@@ -104,11 +104,14 @@ def main(args):
     onnx_path = args.model_input
     # Preprocess the input image
     input_img, original = preprocess_image(image_path)
+    
+    # Create session options
     session_options = ort.SessionOptions()
     session_options.log_severity_level = 1  # 0=Verbose, 1=Info, 2=Warning, 3=Error, 4=Fatal
+
     if args.device == 'cpu':
         print('Running Model on CPU')
-        ort_session = ort.InferenceSession(onnx_path, sess_options=session_options providers=['CPUExecutionProvider'])
+        ort_session = ort.InferenceSession(onnx_path,sess_options=session_options, providers=['CPUExecutionProvider'])
     elif args.device == 'npu-int8':
         print('Running INT8 Model on NPU')
         npu_device = get_npu_info()
@@ -126,7 +129,7 @@ def main(args):
                 'cache_key': 'modelcachekey',
                 'enable_cache_file_io_in_mem':'0'
             }]
-        ort_session = ort.InferenceSession(onnx_path, sess_options=session_options,providers=['VitisAIExecutionProvider'], provider_options=provider_options)
+        ort_session = ort.InferenceSession(onnx_path, sess_options=session_options, providers=['VitisAIExecutionProvider'], provider_options=provider_options)
 
     elif args.device == 'npu-bf16':
         print('Running BF16 Model on NPU')
@@ -155,7 +158,7 @@ def main(args):
         print("Model Accuracy:")
         mAP, mAP50, mAP75 = evaluate_on_coco(args.model_input, ort_session, coco_dataset=args.coco_dataset, device=args.device)
         print("{} model accuracy on {}: mAP {:.3f}, mAP50 {:.3f}, mAP75 {:.3f}".format(args.model_input, args.device, mAP, mAP50, mAP75))
-
+    
     if args.benchmark:
         print("Model Performance:")
         benchmark(ort_session,input_name,input_img)

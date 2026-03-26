@@ -5,7 +5,7 @@ import shutil
 import onnxruntime as ort
 import numpy as np
 from torchvision import datasets, transforms
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Subset
 from tqdm import tqdm
 from pathlib import Path
 
@@ -68,7 +68,7 @@ def get_npu_info():
     if 'PCI\\VEN_1022&DEV_17F0&REV_20' in stdout.decode(): npu_type = 'KRK'
     return npu_type
 
-def evaluate_onnx_model(onnx_model_path, imagenet_data_path, batch_size=1, device='cpu'):
+def evaluate_onnx_model(onnx_model_path, imagenet_data_path, batch_size=1, device='cpu', num_samples=100):
     # Load the ONNX model
     if device == 'npu':
         npu_device = get_npu_info()
@@ -104,7 +104,11 @@ def evaluate_onnx_model(onnx_model_path, imagenet_data_path, batch_size=1, devic
 
     # Load the ImageNet validation dataset
     imagenet_data = datasets.ImageFolder(root=imagenet_data_path, transform=preprocess)
-    data_loader = DataLoader(imagenet_data, batch_size=batch_size, shuffle=False)
+    # Limit to num samples using subnet
+    subset_indices = range(min(num_samples, len(imagenet_data)))
+    imagenet_subset = Subset(imagenet_data, subset_indices)
+    data_loader = DataLoader(imagenet_subset, batch_size=batch_size, shuffle=False)
+    # data_loader = DataLoader(imagenet_data, batch_size=batch_size, shuffle=False)
 
     top1_correct = 0
     top5_correct = 0

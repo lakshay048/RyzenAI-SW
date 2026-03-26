@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2024 Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (C) 2021-2026 Advanced Micro Devices, Inc. All rights reserved.
  */
 
 #include "common-sample-utils.h"
@@ -248,6 +248,13 @@ void RunFeatureClass::RunFeatureVideoFile(const std::string& input_file) {
   } while (user_exit == false && repeat_image_video_ == true);
 }
 
+void RunFeatureClass::MouseEventCallback(int event, int x, int y, int flags, void* userdata) {
+  auto* self = static_cast<RunFeatureClass*>(userdata);
+  if (self != nullptr) {
+    self->OnMouseEvent(event, x, y, flags);
+  }
+}
+
 void RunFeatureClass::RunFeature(const std::string& input, const std::string& output_file,
                                  const std::string& window_title,
                                  std::vector<CamRes>* supported_res) {
@@ -258,6 +265,12 @@ void RunFeatureClass::RunFeature(const std::string& input, const std::string& ou
     output_file_ = std::filesystem::absolute(output_path).string();
   }
   output_window_name_ = window_title;
+
+  // Create named window and set mouse callback if enabled
+  if (enable_mouse_callback_ && !output_window_name_.empty()) {
+    cv::namedWindow(output_window_name_, cv::WINDOW_AUTOSIZE);
+    cv::setMouseCallback(output_window_name_, MouseEventCallback, this);
+  }
 
   // default frame rate
   stream_fps_ = 30;

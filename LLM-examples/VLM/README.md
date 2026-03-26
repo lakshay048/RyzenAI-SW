@@ -1,102 +1,327 @@
-<table class="sphinxhide" width="100%">
- <tr width="100%">
-    <td align="center"><img src="https://raw.githubusercontent.com/Xilinx/Image-Collateral/main/xilinx-logo.png" width="30%"/><h1> Ryzen™ AI LLM Examples </h1>
-    </td>
- </tr>
-</table>
+# VLM Benchmark
 
-# Ryzen AI LLM OGA (Onnx Runtime Generate API) Flow  
+Benchmarking and inference tools for Vision Language Models (VLMs) using ONNX Runtime GenAI.
 
-Ryzen AI Software supports deploying LLMs on Ryzen AI PCs using the native ONNX Runtime Generate (OGA) C++ or Python API. 
-
-Refer to [OnnxRuntime GenAI (OGA)](oga_api/README.md) or https://ryzenai.docs.amd.com/en/latest/hybrid_oga.html for more details. 
-
-# Pre-optimized VLM
-
-AMD provides a pre-optimized Gemma-3-4b-it multimodal model that is ready to be deployed with Ryzen AI Software. Support for this model is available starting with Ryzen AI 1.7. The model is currently offloaded on the NPU. 
-
-The model can be found here: https://huggingface.co/amd/Gemma-3-4b-it-mm-onnx-ryzenai-npu
-
-# Ryzen AI Installation
-
-Instructions for installing Ryzen AI and its requirements are available on the official Ryzen AI Software documentation page: https://ryzenai.docs.amd.com/en/latest/inst.html
-
-# Steps to Run the VLM
-
-- Create and activate a Conda environment by cloning the existing Ryzen AI environment.
-   
-   ```
-   conda create -n run_VLM --clone ryzen-ai-<version>`  
-   conda activate run_VLM
-   ```
-- Install necessary package.
-   ```
-   pip install pillow
-   ```
-
-- Clone the RyzenAI-SW repo and navigate to the VLM folder.
-   
-   ```
-   git clone https://github.com/amd/RyzenAI-SW.git`  
-   cd path\to\RyzenAI-SW\LLM-examples\VLM
-   ```
-
-- Download the Gemma-3-4b-it multimodal model for Ryzen AI NPU.
-   
-   `git clone https://huggingface.co/amd/Gemma-3-4b-it-mm-onnx-ryzenai-npu`
-
-- Execute the run_vision.py script.
-   
-   `python run_vision.py -m "path\to\Gemma-3-4b-it-mm-onnx-ryzenai-npu"`
-
-[NOTE] Provide the full path to the model with the -m option.
-
-- Sample command:
-  
-  `python run_vision.py -m "C:\Users\Gemma-3-4b-it-mm-onnx-ryzenai-npu"`
-  
-- Sample output:
-
-```
-Loading model...                                                                                                        
-Model loaded
-Image Path (comma separated; leave empty if no image): C:\Users\Pictures\australia.jpg
-Using image: C:\Users\Pictures\australia.jpg
-Prompt: Describe the image
-Processing images and prompt...
-Generating response...
-
-Here's a description of the image:
-
-**Overall Impression:**
-
-The image is a stunning and dramatic shot of the Sydney Opera House silhouetted against a vibrant, fiery sunset. It evokes a sense of awe and the beauty of a coastal location.
+**Scripts provided:**
+- **`vlm_run.py`** - Quick inference to test a model and see output
+- **`vlm_benchmark.py`** - Run benchmark for a single image/size  
+- **`run_all_benchmarks.py`** - Run benchmarks across multiple image sizes and save results
 
 
-*▁▁▁**Sydney Opera House:** The iconic building is the central focus, dramatically framed by the sunset. It's rendered in silhouette, emphasizing its unique architecture.                                                                      
-*▁▁▁**Sunset:** The sky is ablaze with color – deep oranges, reds, and purples. There's a strong, bright sun at the horizon.                                                                                                                    
-*▁▁▁**Water:** The water is calm and reflects the colors of the sky, creating a shimmering effect.
-*▁▁▁**Clouds:** There are streaks of pink and purple clouds, adding to the overall dramatic feel.
+## Metrics Measured
 
-**Color and Tone:**
+| Metric | Description |
+|--------|-------------|
+| **Preprocessing Time** | Time spent in multimodal processor (image preprocessing) |
+| **TTFT** | Time To First Token - includes prefill + first token generation |
+| **TPS (Decode)** | Tokens per second during decode phase |
+| **Prefill Throughput** | Tokens per second during prefill (prompt processing) |
+| **Image Tokens** | Number of tokens generated from the image |
 
-*▁▁▁The dominant colors are warm – oranges, reds, and yellows – contrasted by the cooler purples and pinks of the clouds
-.                                                                                                                       *▁▁▁The image has a high contrast, with the dark silhouette of the Opera House against the bright sky.
+## Requirements
 
-**Mood and Atmosphere:**
-
-*▁▁▁The image conveys a sense of peace, wonder, and the grandeur of nature. It feels like a special moment captured.
-
-**Technical Aspects (Based on the image):**
-
-*▁▁▁The image is well-composed, with the Opera House positioned centrally.
-*▁▁▁The photographer has used a long exposure to capture the light trails in the water.
-
-Do you want me to focus on a specific aspect of the image, such as the colors, composition, or the feeling it evokes?
-Total Time : 44.30
+```bash
+conda create -n vlm-bench python=3.12
+conda activate vlm-bench
+pip install onnxruntime-genai pillow numpy psutil
 ```
 
+> **Note:** The above setup is for CPU models. To run AMD NPU models, activate the Ryzen AI conda environment instead.
 
-# Copyright
+## Quick Start
 
-Copyright(C) 2025 Advanced Micro Devices, Inc. All rights reserved.
+### 1. Generate a test image
+
+```bash
+python generate_test_image.py
+```
+
+This creates `test_image.jpg` (4032x4032) with varied visual patterns for benchmarking.
+
+
+### 2. Quick inference (test model output)
+
+```bash
+python vlm_run.py -m /path/to/model -i image.jpg
+```
+
+### 3. Run benchmark for a single size
+
+```bash
+python vlm_benchmark.py \
+  -m /path/to/model \
+  -i test_image.jpg \
+  --image_size 1024 1024 \
+  --max_tokens 50 \
+  -n 3 \
+  -w 1 \
+  -o results.json \
+  -v
+```
+
+### 4. Run benchmarks across multiple image sizes
+
+```bash
+python run_all_benchmarks.py -m /path/to/model
+```
+
+Or run specific sizes with verbose output:
+
+```bash
+python run_all_benchmarks.py -m /path/to/model --sizes 1024x1024 2048x2048 -v
+```
+
+## Scripts
+
+### `vlm_run.py`
+
+Simple inference script to quickly test a model and see output. No benchmarking, just runs the model once.
+
+```
+usage: vlm_run.py [-h] -m MODEL_PATH -i IMAGE_PATH
+                  [-p PROMPT] [-e {cpu,dml,follow_config}]
+                  [--image_size WIDTH HEIGHT]
+                  [--max_tokens MAX_TOKENS] [--max_length MAX_LENGTH]
+                  [--show_prompt]
+
+Arguments:
+  -m, --model_path      Path to the ONNX model folder
+  -i, --image_path      Path to input image
+  -p, --prompt          Prompt text (default: "Describe this image in detail.")
+  -e, --execution_provider
+                        Execution provider: cpu, dml, follow_config
+  --image_size          Resize image to this size (width height)
+  --max_tokens          Max tokens to generate (default: 256)
+  --max_length          Max context length (default: 16384)
+  --show_prompt         Print the full prompt before generation
+```
+
+**Examples:**
+```bash
+# Basic inference
+python vlm_run.py -m ./model -i image.jpg
+
+# Custom prompt
+python vlm_run.py -m ./model -i image.jpg -p "What's in this image?"
+
+# Resize image before running
+python vlm_run.py -m ./model -i image.jpg --image_size 1024 1024
+
+# Generate more tokens
+python vlm_run.py -m ./model -i image.jpg --max_tokens 512
+
+# Debug prompt formatting
+python vlm_run.py -m ./model -i image.jpg --show_prompt
+```
+
+### `vlm_benchmark.py`
+
+Benchmark engine for a single image/size combination. Use this for quick single-size tests.
+
+```
+usage: vlm_benchmark.py [-h] -m MODEL_PATH -i IMAGE_PATH
+                        [-e {cpu,dml,follow_config}]
+                        [-p PROMPT] [--image_size WIDTH HEIGHT]
+                        [--max_tokens MAX_TOKENS] [--max_length MAX_LENGTH]
+                        [-n NUM_ITERATIONS] [-w WARMUP_ITERATIONS]
+                        [-o OUTPUT_JSON] [-v]
+
+Arguments:
+  -m, --model_path      Path to the ONNX model folder
+  -i, --image_path      Path to input image
+  -e, --execution_provider
+                        Execution provider: cpu, dml, follow_config
+  -p, --prompt          Prompt text for the VLM
+  --image_size          Target image size (width height)
+  --max_tokens          Max tokens to generate (default: 100)
+  --max_length          Max context length (default: 16384)
+  -n, --num_iterations  Benchmark iterations (default: 5)
+  -w, --warmup_iterations
+                        Warmup iterations (default: 2)
+  -o, --output_json     Export results to JSON
+  -v, --verbose         Enable verbose output (shows generated text)
+```
+
+**Examples:**
+```bash
+# Quick test
+python vlm_benchmark.py -m ./model -i image.jpg --image_size 1024 1024
+
+# Full benchmark with JSON export
+python vlm_benchmark.py -m ./model -i image.jpg --image_size 1024 1024 \
+  -n 5 -w 2 --max_tokens 100 -o results.json -v
+```
+
+### `run_all_benchmarks.py`
+
+Batch runner for benchmarking across multiple image sizes. Outputs:
+- `benchmark_<size>.json` - per-size results
+- `all_benchmarks_combined.json` - combined JSON
+- `summary.md` - markdown table
+
+```
+usage: run_all_benchmarks.py [-h] -m MODEL_PATH [-i IMAGE] [-o OUTPUT_DIR]
+                             [-p PROMPT] [--max_tokens MAX_TOKENS]
+                             [--max_length MAX_LENGTH]
+                             [-n NUM_ITERATIONS] [-w WARMUP_ITERATIONS]
+                             [--sizes SIZES [SIZES ...]] [-v] [--compact]
+
+Arguments:
+  -m, --model_path      Path to the ONNX model folder (required)
+  -i, --image           Source image path (default: ./test_image.jpg)
+  -o, --output_dir      Output directory for results (default: ./benchmark_results)
+  -p, --prompt          Prompt text
+  --max_tokens          Max tokens to generate (default: 30)
+  --max_length          Max context length (default: 16384)
+  -n, --num_iterations  Benchmark iterations (default: 2)
+  -w, --warmup_iterations Warmup iterations (default: 1)
+  --sizes               Specific sizes to benchmark (e.g., 1024x1024 2048x2048)
+  -v, --verbose         Enable verbose output
+  --compact             Print compact summary (Total Tokens, Image Tokens, TTFT, Decode TPS)
+```
+
+**Examples:**
+```bash
+# Run all sizes (448x448 to 4032x4032)
+python run_all_benchmarks.py -m ./phi-4-mm-onnx
+
+# Custom image and output directory
+python run_all_benchmarks.py -m ./model -i my_image.jpg -o ./my_results
+
+# Run specific sizes only
+python run_all_benchmarks.py -m ./model --sizes 1024x1024 2048x2048
+
+# Verbose mode (shows generated text)
+python run_all_benchmarks.py -m ./model -v --sizes 1024x1024
+
+# Compact output (simplified table)
+python run_all_benchmarks.py -m ./model --compact
+```
+
+### `generate_test_image.py`
+
+Generates synthetic test images with visual complexity for benchmarking.
+
+The generated image includes:
+- Charts (bar, line, pie)
+- Text at multiple sizes
+- Geometric shapes and patterns 
+- Varying complexity regions
+
+```bash
+# Default: 4032x4032
+python generate_test_image.py
+
+# Custom size and output
+python generate_test_image.py -s 2048 -o my_test_image.jpg
+```
+
+## Output Example
+
+### Single Benchmark Output
+
+```
+============================================================
+VLM BENCHMARK RESULTS
+============================================================
+Model Type: phi4mm
+Image Size: 1024x1024
+Number of runs: 3
+
+Token Breakdown:
+  Total Prompt Tokens: 2635
+  Text Tokens:         16
+  Image Tokens:        2619
+
+Preprocessing Time (image processing):
+  Average:       74.41 ms
+
+Time To First Token (TTFT):
+  Average:    46948.55 ms
+
+Prefill Throughput:
+  Average:       56.97 tokens/sec
+
+Token Generation (excluding first token):
+  Average:      277.03 ms/token
+  TPS:            3.61 tokens/sec
+
+Peak Memory Usage:
+       8192.45 MB (8.00 GB)
+============================================================
+```
+
+### Batch Benchmark Summary Table
+
+```
+==============================================================================================================
+BENCHMARK SUMMARY
+==============================================================================================================
+Model:  ./phi-4-mm-fine-tuned-onnx
+Image:  ./test_image.jpg
+Prompt: "Describe this image in detail."
+Text tokens (constant across sizes): 16
+
+Size         Img Tok    Total Tok   Preproc (ms)   TTFT (s)     Prefill        Decode         Decode Lat
+                                                                (tokens/s)     (tokens/s)     (ms/token)
+--------------------------------------------------------------------------------------------------------------
+448x448      539        555         9.76           8.94         62.10          4.05           246.94
+1024x1024    2619       2635        74.41          46.95        56.97          3.61           277.03
+2048x2048    5765       5781        198.19         137.52       42.05          2.29           436.58
+==============================================================================================================
+```
+
+### Compact Output (`--compact`)
+
+```
+============================================================
+BENCHMARK SUMMARY
+============================================================
+Model:  ./phi-4-mm-fine-tuned-onnx
+Image:  ./test_image.jpg
+Prompt: "Describe this image in detail."
+Text tokens (constant across sizes): 16
+
+Size         Total Tok   Img Tok    TTFT (s)     TPS
+                                                 (tok/s)
+------------------------------------------------------------
+448x448      555         539        8.95         4.05
+1024x1024    2635        2619       47.02        3.61
+2048x2048    5781        5765       137.72       2.29
+============================================================
+```
+
+## JSON Output Format
+
+Results exported with `-o` include:
+
+```json
+{
+  "config": {
+    "model_path": "...",
+    "model_type": "phi4mm",
+    "image_size": [1024, 1024],
+    "prompt": "...",
+    "max_tokens": 50,
+    "max_length": 16384
+  },
+  "summary": {
+    "token_breakdown": {
+      "prompt_tokens": 2635,
+      "text_tokens": 16,
+      "image_tokens": 2619
+    },
+    "preprocessing_ms": { "avg": 74.41, "p50": 74.95, ... },
+    "ttft_ms": { "avg": 46948.55, "p50": 47005.69, ... },
+    "prefill_throughput_tps": { "avg": 56.97, "p50": 57.06 },
+    "token_generation_ms": { "avg": 277.03, "tps_avg": 3.61, ... },
+    "peak_memory_bytes": 8589545472,
+    "peak_memory_mb": 8192.45
+  },
+  "raw_measurements": {
+    "preprocessing_times_ms": [...],
+    "ttft_times_ms": [...],
+    "token_gen_times_ms": [...]
+  }
+}
+```
