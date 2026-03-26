@@ -149,13 +149,11 @@ Install PyTorch
 For Windows:
 ```bash
 pip install torch==2.7.1 torchvision==0.22.1 torchaudio==2.7.1 --index-url https://download.pytorch.org/whl/cu128
-python -c "import torch; print(torch.cuda.is_available())" # Must return `True`
 ```
 
 For Linux:
 ```bash
 pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/rocm6.1
-python -c "import torch; print(torch.cuda.is_available())" # Must return `True`
 ```
 
 For `Phi-4-mini-Instruct` model, download and quantize / optimize the model using [olive recipe](https://github.com/microsoft/olive-recipes/blob/main/microsoft-Phi-4-mini-instruct/VitisAI/Phi-4-mini-instruct_quark_vitisai_llm.json), then use the generated ONNX model with `run_genai_llm.py` inference script to run on AMD NPU/CPU.

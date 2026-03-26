@@ -6,6 +6,7 @@
 </table>
 
 # Windows ML CLIP
+
 Run quantized CLIP Vision Transformer models on Windows NPU for zero-shot image classification using natural language prompts.
 
 
