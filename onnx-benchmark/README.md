@@ -77,14 +77,14 @@ Each time you start a run, the GUI prints the equivalent CLI command so you can 
 ##  2.1 <a name='InstallProcedure'></a>Install Procedure
 Prerequisite: Install [Anaconda](https://docs.anaconda.com/free/anaconda/install/index.html) or Miniconda.
 
-1. Run the RyzenAI 1.6.0 installer.
+1. Run the RyzenAI installer.
 2. Install HWINFO if you plan to capture power measurements.
 3. Activate the conda environment:
 ```bash
-conda activate ryzen-ai-1.6.0
+conda activate ryzen-ai-<version>
 ```
 4. Run `set_env.bat`. For HWINFO usage, uncomment the relevant section and adjust the installation path.
-5. When the `ryzen-ai-1.6.0` environment is active, complete the setup:
+5. When the `ryzen-ai-<version>` environment is active, complete the setup:
 ```bash
 python -m pip install -r requirements-win.txt
 ```

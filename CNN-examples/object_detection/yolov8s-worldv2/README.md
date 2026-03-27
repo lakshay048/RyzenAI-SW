@@ -32,6 +32,7 @@ Install the other required python packages
 pip install opencv-python  
 pip install pycocotools  
 pip install torch  
+pip install ultralytics  
 pip install --force-reinstall numpy==1.26.4
 
 ```
@@ -48,6 +49,7 @@ Origin pth model link:
 https://github.com/ultralytics/assets/releases/download/v8.4.0/yolov8s-worldv2.pt
 
 ```bash
+mkdir models
 .\download.bat
 ```
 
@@ -64,7 +66,7 @@ The exported onnx model will be saved to 'models/yolov8s-worldv2.onnx'.
 We will quantize it with exclude post-process. The post-process part will retained in onnx model with this method, which could simplify the complexity of our deployment.
 
 ```bash
-python quark_quant.py --onnx models\yolov8s-world.onnx --quant A16W8_ADAROUND -exclude-post
+python quark_quant.py --onnx models\yolov8s-worldv2.onnx --quant A16W8_ADAROUND -exclude-post
 ```
 
 ## Eval onnx model

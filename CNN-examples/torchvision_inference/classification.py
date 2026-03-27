@@ -76,13 +76,14 @@ preprocess = torchvision.transforms.Compose([
 
 # Load dataset
 calib_dataset = torchvision.datasets.ImageFolder(root=calib_dir, transform=preprocess)
+print("Dataset contains {} samples".format(len(calib_dataset)))
 
-#Data set
-num_calib_data = 600
+# Data set
+num_calib_data = 100
 calib_dataset = torch.utils.data.Subset(calib_dataset, range(num_calib_data))
 
 # Define DataLoader for Calibration
-calibration_dataloader = torch.utils.data.DataLoader(calib_dataset, batch_size=10, shuffle=False)
+calibration_dataloader = torch.utils.data.DataLoader(calib_dataset, batch_size=1, shuffle=False)
 
 # Configure Quark Quantization
 quant_config = get_default_config("XINT8")  # Use XINT8 quantization
@@ -233,7 +234,7 @@ match npu_type:
         exit()
 
 # Create session options
-session_options = ort.SessionOptions()
+session_options = onnxruntime.SessionOptions()
 session_options.log_severity_level = 1  # 0=Verbose, 1=Info, 2=Warning, 3=Error, 4=Fatal
 
 npu_session = onnxruntime.InferenceSession(

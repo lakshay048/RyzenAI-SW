@@ -51,9 +51,14 @@ To run the demos and examples in this repository, please follow the instructions
 - BF16 Model Examples
   - [Finetuned DistilBERT for Text Classification](Transformer-examples/DistilBERT_text_classification_bf16)
   - [Image classification](CNN-examples/image_classification)
-- [Object detection with Yolov8 models](CNN-examples/object_detection)
-- [Automatic Speech Recognition: Step by Step guide to run Whisper-base on NPU](Transformer-examples/ASR/Whisper-AI)
+- [Object detection with Yolov8](CNN-examples/object_detection)
+- [Super-Resolution](CNN-examples/super-resolution)
 
+## Windows ML Examples
+
+- [Running ResNet with Windows ML](WinML/CNN/ResNet)
+- [Running Transformer models with Windows ML](WinML/Transformers)
+- [Running LLMs with Windows ML](WinML/LLM)
 
 ## Demos
 

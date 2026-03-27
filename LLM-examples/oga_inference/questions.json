@@ -1,0 +1,19 @@
+[
+    {
+        "id": 1,
+        "prompt": "Can you explain like I'm 5 why is the sky blue?"
+    },
+    {
+        "id": 2,
+        "prompt": "Alice has no apples and Bob has five. Bob gives 2 apples to Alice, how many does Bob have left?"
+    },
+    {
+        "id": 3,
+        "prompt": "How many apples does Alice have?"
+    },
+    {
+        "id": 4,
+        "prompt":  "Please give me c++ code to reverse a string. Do not use any inbuilt function and please be succint."
+
+    }
+]

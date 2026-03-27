@@ -7,8 +7,8 @@ Ryzen AI Software includes support for deploying LLMs on Ryzen AI PCs using the 
 AMD provides a set of pre-optimized LLMs ready to be deployed with Ryzen AI Software and the supporting runtime for hybrid and NPU execution. These models can be found on Hugging Face: 
 
 ### Published models: 
-- [Ryzen AI Hybrid models.](https://huggingface.co/collections/amd/ryzenai-14-llm-hybrid-models-67da31231bba0f733750a99c)
-- [Ryzen AI NPU models.](https://huggingface.co/collections/amd/ryzenai-13-llm-npu-models-6759f510b8132db53e044aaf)
+- [Ryzen AI Hybrid models.](https://huggingface.co/collections/amd/ryzen-ai-17-hybrid-llm)
+- [Ryzen AI NPU models.](https://huggingface.co/collections/amd/ryzen-ai-17-npu-llm)
 
 ## Ryzen AI Installation
 
@@ -17,15 +17,15 @@ AMD provides a set of pre-optimized LLMs ready to be deployed with Ryzen AI Soft
 ## Steps to compile and run LLM example.
 - Activate Ryzen AI environment:
 ```
-conda activate ryzen-ai-1.5.0
+conda activate ryzen-ai-1.7.0
 ```
 - Download the model: This example uses the Llama-2-7b-chat model.
 ```
 #hyrbid model:
-git clone https://huggingface.co/amd/Llama-2-7b-chat-hf-awq-g128-int4-asym-fp16-onnx-hybrid
+git clone https://huggingface.co/amd/Llama-2-7b-chat-hf-onnx-ryzenai-1.7-hybrid
 
 #npu model:
-git clone https://huggingface.co/amd/Llama2-7b-chat-awq-g128-int4-asym-bf16-onnx-ryzen-strix
+git clone https://huggingface.co/amd/Llama-2-7b-chat-hf-onnx-ryzenai-npu
 ```
 
 - Clone the RyzenAI-SW repository:
