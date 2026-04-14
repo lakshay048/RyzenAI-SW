@@ -64,6 +64,8 @@ To run the demos and examples in this repository, please follow the instructions
 
 - [NPU-GPU pipeline on RyzenAI](Demos/NPU-GPU-Pipeline)
 - [Automatic Speech Recognition using OpenAI Whisper](Demos/ASR/Whisper)
+- [Automatic Speech Recognition using NVIDIA Parakeet TDT optimized for AMD Ryzen AI](Demos/ASR/Parakeet-TDT)
+
 
 ## Other Tutorials
 
