@@ -1,0 +1,13 @@
+# Parakeet ASR Server - Python Dependencies
+#
+# IMPORTANT: If using Ryzen AI NPU (--device npu), do NOT install onnxruntime
+# from pip. The ryzen-ai conda environment already includes onnxruntime with
+# VitisAI Execution Provider support. Installing from pip would overwrite it.
+#
+# For CPU-only usage, uncomment the onnxruntime line below:
+# onnxruntime>=1.17.0
+
+numpy>=1.24.0
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+python-multipart>=0.0.6
