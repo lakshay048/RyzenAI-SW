@@ -29,7 +29,6 @@ The NVIDIA Nemotron OCR v2 pipeline consists of three models:
 This repository provides utilities to run these models on AMD Ryzen AI NPUs using:
 
 - **AMD Vitis AI** for NPU compilation and inference
-
 ## Requirements
 
 ### Hardware & Software
@@ -179,6 +178,6 @@ python compile_npu.py \
   --benchmark
 ```
 
-## License
+## License/Terms of use
 
-The NVIDIA Nemotron OCR v2 models are licensed under the [NVIDIA Open Model License](https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-open-model-license/). Please review the license terms before using these models. By using the NVIDIA Nemotron OCR v2 models, you agree to comply with the terms and conditions specified in the NVIDIA Open Model License.
+The use of this model is governed by the [NVIDIA Open Model License Agreement](https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-open-model-license/) and the post-processing scripts are licensed under [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0.txt).
