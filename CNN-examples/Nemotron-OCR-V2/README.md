@@ -27,6 +27,7 @@ The NVIDIA Nemotron OCR v2 pipeline consists of three models:
 | **Relational** | Handles relational text understanding |
 
 This repository provides utilities to run these models on AMD Ryzen AI NPUs using:
+
 - **AMD Vitis AI** for NPU compilation and inference
 
 ## Requirements
