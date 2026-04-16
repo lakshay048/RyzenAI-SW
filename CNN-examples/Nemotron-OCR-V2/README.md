@@ -178,3 +178,10 @@ python compile_npu.py \
   --benchmark
 ```
 
+## License
+
+The NVIDIA Nemotron OCR v2 models are licensed under the **NVIDIA Open Model License**. Please review the license terms before using these models:
+
+[NVIDIA Open Model License](https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-open-model-license/)
+
+By using the NVIDIA Nemotron OCR v2 models, you agree to comply with the terms and conditions specified in the NVIDIA Open Model License.
