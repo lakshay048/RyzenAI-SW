@@ -190,13 +190,13 @@ python test_e2e_pipeline.py \
 This script runs the complete end-to-end OCR pipeline (detector, recognizer, and relational models) on both CPU and NPU, comparing performance and accuracy. Visualizes detection boxes, recognized text, and nearest-neighbor relationships, generating side-by-side comparisons. Outputs visualizations and JSON results (with extracted text, bounding boxes, confidence scores, and inference times) to the `./e2e_results` folder.
 
 <p align="center">
-  <img src="https://media.gitenterprise.xilinx.com/user/6107/files/135fe86a-acf4-4f32-9a0d-66093edb3714" width="600"/>
+  <img src="recognizer_output.png" width="600"/>
   <br/>
   <em>Recognizer Model</em>
 </p>
 
 <p align="center">
-  <img src="https://media.gitenterprise.xilinx.com/user/6107/files/2ebf6489-3b38-4097-92f1-eec4b2bdb0ee" width="600"/>
+  <img src="relational_output.png" width="600"/>
   <br/>
   <em>Relational Model</em>
 </p>
