@@ -10,7 +10,7 @@
 This project demonstrates running [NVIDIA's Nemotron OCR v2](https://huggingface.co/nvidia/nemotron-ocr-v2) models on AMD Ryzen AI NPUs using BF16 precision. The repository provides:
 
 - **ONNX model export** from PyTorch to static-shape ONNX format
-- **NPU compilation** via AMD Vitis AI with BF16 quantization
+- **NPU compilation** via AMD Vitis AI with BF16 flow
 - **Inference testing** comparing CPU vs NPU performance
 - **Visualization tools** for detection results
 
@@ -20,19 +20,18 @@ Ryzen AI provides seamless support for deploying FP32 models on NPU hardware thr
 
 The NVIDIA Nemotron OCR v2 pipeline consists of three models:
 
-| Model | Purpose |
+| Model | Purpose | 
 |-------|---------|
 | **Detector** | Locates text regions in images |
 | **Recognizer** | Extracts text from detected regions |
 | **Relational** | Handles relational text understanding |
 
 This repository provides utilities to run these models on AMD Ryzen AI NPUs using:
-
 - **AMD Vitis AI** for NPU compilation and inference
+
 ## Requirements
 
 ### Hardware & Software
-
 - **AMD Ryzen AI processor** with NPU support
 - **Windows 11**
 - **Visual Studio 2022**
@@ -40,7 +39,6 @@ This repository provides utilities to run these models on AMD Ryzen AI NPUs usin
 - **Python** distribution (Miniforge recommended)
 
 ### AMD Ryzen AI Environment
-
 - **AMD Ryzen AI 1.7.1** conda environment required
 - Installation guide: https://ryzenai.docs.amd.com/en/latest/inst.html
 
@@ -122,7 +120,7 @@ conda activate ryzen-ai-1.7.1
 
 **Requirements:**
 
-- A [vitisai_config.json](vitisai_config.json) configuration file is required for BF16 model compilation.
+- A [vitisai_config.json](vitisai_config.json) configuration file is required 
 - The optional `--benchmark` flag runs the compiled model on dummy input to measure performance on the NPU
 
 The compile script creates a cache in the specified `cache-dir`, within a cache key folder. This cache is later used when running the model on the NPU. Depending on the model size and hardware, BF16 compilation may take some time to complete.
@@ -177,6 +175,33 @@ python compile_npu.py \
   --vai-config vitisai_config.json \
   --benchmark
 ```
+
+#### Test the End to End pipeline on the NPU
+
+```bash
+python test_e2e_pipeline.py \
+  --detector "Models\nvidia-nemotron-ocr-v2-detector-english\nvidia-nemotron-ocr-v2-detector-english_1x3x1024x1024.onnx" \
+  --recognizer "Models\nvidia-nemotron-ocr-v2-recognizer-english\nvidia-nemotron-ocr-v2-recognizer-english_1x128x8x32.onnx" \
+  --relational "Models\nvidia-nemotron-ocr-v2-relational-english\nvidia-nemotron-ocr-v2-relational-english_128x128x2x3.onnx" \
+  --image "Images\test\image.png" \
+  --vai-config vitisai_config.json
+```
+
+This script runs the complete end-to-end OCR pipeline (detector, recognizer, and relational models) on both CPU and NPU, comparing performance and accuracy. Visualizes detection boxes, recognized text, and nearest-neighbor relationships, generating side-by-side comparisons. Outputs visualizations and JSON results (with extracted text, bounding boxes, confidence scores, and inference times) to the `./e2e_results` folder.
+
+<p align="center">
+  <img src="https://media.gitenterprise.xilinx.com/user/6107/files/135fe86a-acf4-4f32-9a0d-66093edb3714" width="600"/>
+  <br/>
+  <em>Recognizer Model</em>
+</p>
+
+<p align="center">
+  <img src="https://media.gitenterprise.xilinx.com/user/6107/files/2ebf6489-3b38-4097-92f1-eec4b2bdb0ee" width="600"/>
+  <br/>
+  <em>Relational Model</em>
+</p>
+
+
 
 ## License/Terms of use
 

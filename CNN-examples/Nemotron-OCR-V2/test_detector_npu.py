@@ -5,8 +5,6 @@ import numpy as np
 import onnxruntime as ort
 from pathlib import Path
 import time
-import subprocess
-import platform
 import cv2
 
 from utils.preprocessing import preprocess_image
@@ -16,60 +14,12 @@ from utils.postprocessing import (
     scale_and_format,
     draw_boxes
 )
+from utils.util import configure_npu_power
 
 os.environ["XLNX_ENABLE_CACHE"] = "1"
 os.environ["PATH"] += (
     os.pathsep + f"{os.environ['CONDA_PREFIX']}\\Lib\\site-packages\\flexmlrt\\lib"
 )
-
-XRT_SMI_PATH = "C:\\Windows\\System32\\AMD\\xrt-smi.exe"
-
-
-def configure_npu_power(p_mode: Optional[str] = None) -> Tuple[int, str, str]:
-    """
-    Configures the NPU power state using xrt-smi.exe.
-
-    Args:
-        p_mode (string, optional): The desired power mode (p-mode).
-            If None, displays current status.
-            Refer to xrt-smi documentation for valid p-modes.
-    Returns:
-        tuple: (return_code, stdout, stderr) from the subprocess call.
-               return_code is an integer, stdout and stderr are strings.
-    Raises:
-        OSError: If xrt-smi.exe is not found.
-    """
-
-    if platform.system() != "Windows":
-        return (-1, "xrt-smi.exe is only available on Windows.", "")
-
-    try:
-        if p_mode is not None:
-            command = [XRT_SMI_PATH, "configure", "--pmode", str(p_mode)]
-        else:
-            command = [
-                XRT_SMI_PATH,
-                "examine",
-                "--report",
-                "platform",
-            ]
-
-        process = subprocess.Popen(
-            command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
-        )
-        stdout, stderr = process.communicate()
-        return_code = process.returncode
-
-        if return_code != 0:
-            print(f"Error executing xrt-smi.exe: {stderr}")
-
-        return return_code, stdout, stderr
-
-    except FileNotFoundError:
-        raise OSError("xrt-smi.exe not found.")
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
-        return -1, "", str(e)
 
 
 def get_cache_key_from_model_path(model_path):
