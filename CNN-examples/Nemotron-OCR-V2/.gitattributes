@@ -1,0 +1,4 @@
+Nemotron-OCR-V2/Models/nvidia-nemotron-ocr-v2-detector-english/*.data filter=lfs diff=lfs merge=lfs -text
+Nemotron-OCR-V2/Models/nvidia-nemotron-ocr-v2-relational-english/*.data filter=lfs diff=lfs merge=lfs -text
+Nemotron-OCR-V2/Models/nvidia-nemotron-ocr-v2-recognizer-english/*.data filter=lfs diff=lfs merge=lfs -text
+*.data filter=lfs diff=lfs merge=lfs -text

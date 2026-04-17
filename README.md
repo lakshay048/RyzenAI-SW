@@ -53,6 +53,7 @@ To run the demos and examples in this repository, please follow the instructions
   - [Image classification](CNN-examples/image_classification)
 - [Object detection with Yolov8](CNN-examples/object_detection)
 - [Super-Resolution](CNN-examples/super-resolution)
+- [Nemotron OCR v2 models on AMD Ryzen AI NPU](CNN-examples/Nemotron-OCR-V2)
 
 ## Windows ML Examples
 
